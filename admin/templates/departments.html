@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Настройки</div>
+  <h1>Направления</h1>
+  <p>Каждое направление — отдельный лист в таблице. Имя должно точно совпадать
+     с названием вкладки в Google Sheets. Исполнитель пишется в колонку Staff Name,
+     а алиасы помогают боту определить лист из текста сообщения.</p>
+</div>
+{% if saved %}<div class="flash ok">Сохранено</div>{% endif %}
+
+<div class="card">
+  <form method="post" action="/settings/departments">
+    <div id="rows">
+      {% for d in departments %}
+      <div class="dept-row">
+        <div class="dept-grid">
+          <div class="field">
+            <label>Имя листа</label>
+            <input type="text" name="name" value="{{ d.name }}" required>
+          </div>
+          <!-- Исполнитель скрыт -->
+          <input type="hidden" name="staff" value="{{ d.staff_name }}">
+          <div class="field full">
+            <label>Алиасы</label>
+            <input type="text" name="aliases" value="{{ d.aliases | join(', ') }}" placeholder="it, айти, ит">
+            <div class="hint">Варианты названия на разных языках через запятую.</div>
+          </div>
+        </div>
+        <div class="row-actions">
+          <button type="button" class="btn danger sm" onclick="this.closest('.dept-row').remove()">Удалить</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn neutral" onclick="addRow()">Добавить направление</button>
+      <button type="submit" class="btn">Сохранить</button>
+    </div>
+  </form>
+</div>
+
+<template id="tpl">
+  <div class="dept-row">
+    <div class="dept-grid">
+      <div class="field"><label>Имя листа</label><input type="text" name="name" required></div>
+      <!-- Исполнитель скрыт -->
+      <input type="hidden" name="staff" value="">
+      <div class="field full"><label>Алиасы</label>
+        <input type="text" name="aliases" placeholder="it, айти, ит">
+        <div class="hint">Варианты названия на разных языках через запятую.</div>
+      </div>
+    </div>
+    <div class="row-actions">
+      <button type="button" class="btn danger sm" onclick="this.closest('.dept-row').remove()">Удалить</button>
+    </div>
+  </div>
+</template>
+
+<script>
+function addRow() {
+  var tpl = document.getElementById('tpl');
+  document.getElementById('rows').appendChild(tpl.content.cloneNode(true));
+}
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+.env
+google-creds.json
+data/settings.json
+data/.session_secret
+logs/
+*.log
+__pycache__/
+venv/
+*.pyc

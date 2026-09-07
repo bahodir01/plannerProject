@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Мониторинг</div>
+  <h1>Логи</h1>
+  <p>События бота и панели: задачи, входы, изменения настроек, отказы доступа, ошибки.</p>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Журнал событий</h2></div>
+  <div class="filters">
+    <a href="/logs" class="{% if not kind %}active{% endif %}">Все</a>
+    <a href="/logs?kind=task_created" class="{% if kind=='task_created' %}active{% endif %}">Задачи</a>
+    <a href="/logs?kind=task_cancelled" class="{% if kind=='task_cancelled' %}active{% endif %}">Отмены</a>
+    <a href="/logs?kind=admin_login" class="{% if kind=='admin_login' %}active{% endif %}">Входы</a>
+    <a href="/logs?kind=settings_changed" class="{% if kind=='settings_changed' %}active{% endif %}">Настройки</a>
+    <a href="/logs?kind=access_denied" class="{% if kind=='access_denied' %}active{% endif %}">Отказы</a>
+    <a href="/logs?kind=error" class="{% if kind=='error' %}active{% endif %}">Ошибки</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:160px">Время</th><th style="width:150px">Событие</th>
+        <th style="width:130px">Кто</th><th>Сообщение</th></tr></thead>
+      <tbody>
+      {% for e in events %}
+        <tr>
+          <td class="mono">{{ e.ts | replace("T", " ") }}</td>
+          <td><span class="kind {{ e.kind }}">{{ e.kind }}</span></td>
+          <td>{{ e.actor }}</td>
+          <td>{{ e.message }}{% if e.extra %} <span class="muted mono" style="font-size:11px">{{ e.extra }}</span>{% endif %}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="muted">Событий пока нет.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Технический лог бота</h2>
+    <div class="section-note">Последние строки logs/bot.log.</div></div>
+  <pre class="log">{{ bot_log or "Лог пуст." }}</pre>
+</div>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Мониторинг</div>
+  <h1>Использование API</h1>
+  <p>Статистика расходов и остаток free tier провайдеров за последние 30 дней.</p>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>💰 Итого расходов</h2>
+  </div>
+  <div style="font-size: 32px; font-weight: 700; color: var(--accent); margin: 20px 0;">
+    ${{ "%.2f"|format(stats.total_cost) }}
+  </div>
+  <div class="kv">
+    <div>Период</div>
+    <div>Последние {{ stats.period_days }} дней</div>
+    <div>По состоянию на</div>
+    <div>{{ stats.timestamp_until }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>🔌 По провайдерам</h2>
+  </div>
+  {% for provider, data in stats.by_provider.items() %}
+  <div style="margin-bottom: 20px; padding: 16px; background: var(--surface-2); border-radius: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <div style="font-weight: 600; font-size: 15px;">{{ provider.upper() }}</div>
+      <div style="font-size: 13px; color: var(--ink-soft);">
+        {{ data.calls }} вызовов
+      </div>
+    </div>
+    <div class="kv">
+      <div>Стоимость</div>
+      <div><strong>${{ "%.3f"|format(data.cost) }}</strong></div>
+      {% if provider == "assemblyai" %}
+      <div>Использовано часов</div>
+      <div>{{ "%.1f"|format(data.duration_hours) }} ч</div>
+      {% endif %}
+      {% if provider in ["gemini", "openai"] %}
+      <div>Использовано токенов</div>
+      <div>{{ "{:,}".format(data.tokens) }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>📊 По типам сервиса</h2>
+  </div>
+  {% for service, data in stats.by_service.items() %}
+  <div style="margin-bottom: 16px;">
+    <div style="display: flex; justify-content: space-between;">
+      <div>
+        {% if service == "stt" %}
+          🎤 Speech-to-Text
+        {% elif service == "nlp" %}
+          🧠 Text Processing
+        {% else %}
+          {{ service }}
+        {% endif %}
+      </div>
+      <div>{{ data.calls }} запросов • <strong>${{ "%.3f"|format(data.cost) }}</strong></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>📈 Free Tier статус</h2>
+    <div class="section-note">Лимиты и сроки обновления</div>
+  </div>
+
+  {% for provider_key, tier_info in free_tier_status.items() %}
+  <div style="margin-bottom: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 8px;">
+    <div style="font-weight: 600; margin-bottom: 8px;">
+      {{ tier_info.name }}
+      {% if tier_info.status == "active" %}
+        <span class="pill ok" style="margin-left: 8px;">Активен</span>
+      {% elif tier_info.status == "paid" %}
+        <span class="pill warn" style="margin-left: 8px;">Платный</span>
+      {% endif %}
+    </div>
+
+    {% if tier_info.status == "active" %}
+      <div class="kv" style="font-size: 13px;">
+        <div>Лимит</div>
+        <div><strong>{{ tier_info.free_tier_limit }}</strong></div>
+        {% if tier_info.reset_date %}
+        <div>Обновится</div>
+        <div>{{ tier_info.reset_date }}</div>
+        {% endif %}
+        {% if tier_info.reset_time %}
+        <div>Сброс</div>
+        <div>{{ tier_info.reset_time }}</div>
+        {% endif %}
+      </div>
+      <div style="margin-top: 10px;">
+        <a href="{{ tier_info.docs }}" target="_blank" style="font-size: 12px;">Документация →</a>
+      </div>
+    {% else %}
+      <div style="color: var(--ink-soft); font-size: 13px;">
+        Требует оплату. Используется как резервный.
+      </div>
+      <div style="margin-top: 10px;">
+        <a href="{{ tier_info.docs }}" target="_blank" style="font-size: 12px;">Получить ключ →</a>
+      </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>⚙️ Рекомендации</h2>
+  </div>
+  <ul style="margin: 0; padding-left: 20px;">
+    <li>AssemblyAI: 185 часов в месяц — хватает на ~150-200 минут речи в день</li>
+    <li>Gemini: 1М токенов/день — для среднего использования достаточно</li>
+    <li>OpenAI: Используется как резервный при превышении лимитов других</li>
+    <li>💡 Переключайте провайдеры в "AI Провайдеры" если нужен контроль расходов</li>
+  </ul>
+</div>
+
+{% endblock %}

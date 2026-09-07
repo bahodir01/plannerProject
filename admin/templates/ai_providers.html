@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Настройки</div>
+  <h1>AI Провайдеры</h1>
+  <p>Настройка и приоритизация AI сервисов для обработки речи и текста.</p>
+</div>
+{% if saved %}<div class="flash ok">Сохранено</div>{% endif %}
+
+<div class="card">
+  <div class="card-head">
+    <h2>1. Speech-to-Text (Распознавание речи)</h2>
+    <div class="section-note">Очередность: основной → резервный</div>
+  </div>
+  <form method="post" action="/settings/ai_providers">
+    <div class="field">
+      <label>🥇 Основной провайдер</label>
+      <select name="stt_primary">
+        <option value="assemblyai" {% if config.stt_primary == "assemblyai" %}selected{% endif %}>AssemblyAI (Бесплатно: 185 часов)</option>
+        <option value="openai" {% if config.stt_primary == "openai" %}selected{% endif %}>OpenAI Whisper API</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>🥈 Резервный провайдер</label>
+      <select name="stt_fallback">
+        <option value="">— Не использовать —</option>
+        <option value="openai" {% if config.stt_fallback == "openai" %}selected{% endif %}>OpenAI Whisper API</option>
+        <option value="assemblyai" {% if config.stt_fallback == "assemblyai" %}selected{% endif %}>AssemblyAI</option>
+      </select>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label>AssemblyAI API Key</label>
+      <input type="password" name="assemblyai_key" value="{{ config.assemblyai_key or '' }}" placeholder="Получить на https://www.assemblyai.com">
+      <div class="hint">Free tier: 185 часов в месяц. <a href="https://www.assemblyai.com" target="_blank">Регистрация →</a></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <h2>2. Text Processing (Обработка текста)</h2>
+      <div class="section-note">Классификация, генерация, понимание</div>
+    </div>
+
+    <div class="field">
+      <label>🥇 Основной провайдер</label>
+      <select name="nlp_primary">
+        <option value="gemini" {% if config.nlp_primary == "gemini" %}selected{% endif %}>Google Gemini (Бесплатно: 1M токенов/день)</option>
+        <option value="openai" {% if config.nlp_primary == "openai" %}selected{% endif %}>OpenAI ChatGPT (Платный)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>🥈 Резервный провайдер</label>
+      <select name="nlp_fallback">
+        <option value="">— Не использовать —</option>
+        <option value="openai" {% if config.nlp_fallback == "openai" %}selected{% endif %}>OpenAI ChatGPT</option>
+        <option value="gemini" {% if config.nlp_fallback == "gemini" %}selected{% endif %}>Google Gemini</option>
+      </select>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label>Google Gemini API Key</label>
+      <input type="password" name="gemini_key" value="{{ config.gemini_key or '' }}" placeholder="Получить на https://aistudio.google.com/app/apikeys">
+      <div class="hint">Free tier: 1 млн токенов/день, 60 запросов/минуту. <a href="https://aistudio.google.com/app/apikeys" target="_blank">Получить ключ →</a></div>
+    </div>
+
+    <div class="field">
+      <label>OpenAI API Key (резервный)</label>
+      <input type="password" name="openai_key" value="{{ config.openai_key or '' }}" placeholder="sk-...">
+      <div class="hint">Платный. <a href="https://platform.openai.com/api-keys" target="_blank">Получить ключ →</a></div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">Сохранить</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>📊 Текущий статус</h2>
+  <div class="kv">
+    <div>Speech-to-Text (основной)</div>
+    <div><span class="pill ok">{{ config.stt_primary }}</span></div>
+    <div>Speech-to-Text (резервный)</div>
+    <div><span class="pill">{{ config.stt_fallback or "Не настроен" }}</span></div>
+    <div>Text Processing (основной)</div>
+    <div><span class="pill ok">{{ config.nlp_primary }}</span></div>
+    <div>Text Processing (резервный)</div>
+    <div><span class="pill">{{ config.nlp_fallback or "Не настроен" }}</span></div>
+  </div>
+</div>
+
+{% endblock %}

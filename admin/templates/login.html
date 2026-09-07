@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вход — Planner Bot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand">
+        <span class="mark">P</span>
+        <span>Planner Bot<small>панель управления</small></span>
+      </div>
+      <h1>Вход в панель</h1>
+      <div class="sub">Управление ботом, направлениями и доступами</div>
+      {% if error %}<div class="flash err">Неверный логин или пароль</div>{% endif %}
+      <form method="post" action="/login" class="stack-sm">
+        <div class="field">
+          <label>Логин</label>
+          <input type="text" name="username" autofocus required>
+        </div>
+        <div class="field">
+          <label>Пароль</label>
+          <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Войти</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

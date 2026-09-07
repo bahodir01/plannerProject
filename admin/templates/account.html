@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Настройки</div>
+  <h1>Учётная запись</h1>
+  <p>Доступ администратора к этой панели.</p>
+</div>
+{% if saved %}<div class="flash ok">Сохранено</div>{% endif %}
+
+<div class="card">
+  <form method="post" action="/settings/account">
+    <div class="field">
+      <label>Логин</label>
+      <input type="text" name="username" value="{{ username }}" required>
+    </div>
+    <div class="field">
+      <label>Новый пароль</label>
+      <input type="password" name="password" placeholder="оставьте пустым, чтобы не менять">
+      <div class="hint">Пароль хранится в виде хеша (PBKDF2). Смените пароль по умолчанию
+        сразу после первого входа.</div>
+    </div>
+    <div class="form-actions"><button type="submit" class="btn">Сохранить</button></div>
+  </form>
+</div>
+{% endblock %}

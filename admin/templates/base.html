@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Planner Bot{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">P</span>
+      <span>Planner Bot<small>панель управления</small></span>
+    </div>
+    <div class="topbar-right">
+      <span class="who">{{ user }}</span>
+      <a href="/logout">Выйти</a>
+    </div>
+  </div>
+
+  <div class="layout">
+    <nav class="side">
+      <div class="group-label">Настройки</div>
+      <div class="rail">
+        <a class="item {% if active=='dashboard' %}active{% endif %}" href="/">Обзор</a>
+        <a class="item {% if active=='ai_providers' %}active{% endif %}" href="/settings/ai_providers">AI Провайдеры</a>
+        <a class="item {% if active=='telegram' %}active{% endif %}" href="/settings/telegram">Telegram и доступы</a>
+        <a class="item {% if active=='google' %}active{% endif %}" href="/settings/google">Google Sheets</a>
+        <a class="item {% if active=='behavior' %}active{% endif %}" href="/settings/behavior">Поведение</a>
+        <a class="item {% if active=='departments' %}active{% endif %}" href="/settings/departments">Направления</a>
+        <a class="item {% if active=='account' %}active{% endif %}" href="/settings/account">Учётная запись</a>
+      </div>
+      <div class="group-label" style="margin-top:18px">Мониторинг</div>
+      <div class="rail">
+        <a class="item {% if active=='api_usage' %}active{% endif %}" href="/api_usage">Использование API</a>
+        <a class="item {% if active=='logs' %}active{% endif %}" href="/logs">Логи</a>
+      </div>
+    </nav>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

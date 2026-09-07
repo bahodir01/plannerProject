@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Настройки</div>
+  <h1>Telegram и доступы</h1>
+  <p>Подключение бота и белый список пользователей, которые могут ставить задачи.</p>
+</div>
+{% if saved %}<div class="flash ok">Сохранено</div>{% endif %}
+
+<div class="card">
+  <div class="card-head">
+    <h2>Бот и доступы</h2>
+    <div class="section-note">Токен от @BotFather и белый список Telegram ID.</div>
+  </div>
+  <form method="post" action="/settings/telegram">
+    <div class="field">
+      <label>Токен бота</label>
+      <input type="text" class="mono" name="token" value="{{ s.telegram.token }}" placeholder="123456:ABC-...">
+    </div>
+    <div class="field">
+      <label>Разрешённые Telegram ID</label>
+      <textarea class="mono" name="allowed_user_ids" placeholder="111111111, 222222222">{{ allowed_ids }}</textarea>
+      <div class="hint">Числовые ID через запятую или с новой строки. Свой ID можно узнать
+        у @userinfobot. Если список пуст — доступ открыт всем (не рекомендуется).</div>
+    </div>
+    <div class="form-actions"><button type="submit" class="btn">Сохранить</button></div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>💡 API ключи</h2>
+  <p>Все API ключи (OpenAI, Gemini, AssemblyAI) находятся в разделе <a href="/settings/ai_providers"><strong>AI Провайдеры</strong></a>.</p>
+</div>
+{% endblock %}

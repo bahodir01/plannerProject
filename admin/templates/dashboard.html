@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Обзор</div>
+  <h1>Состояние системы</h1>
+  <p>Сводка текущей конфигурации бота. Любые изменения в панели применяются
+     к работающему боту сразу, без перезапуска.</p>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Готовность к работе</h2>
+    <div class="section-note">Ключевые подключения, без которых бот не запустится.</div>
+  </div>
+  <div class="kv">
+    <div>Токен Telegram</div>
+    <div>{% if ok_token %}<span class="pill ok">задан</span>{% else %}<span class="pill bad">не задан</span>{% endif %}</div>
+    <div>Ключ OpenAI</div>
+    <div>{% if ok_openai %}<span class="pill ok">задан</span>{% else %}<span class="pill bad">не задан</span>{% endif %}</div>
+    <div>Google креды (файл)</div>
+    <div>{% if ok_creds %}<span class="pill ok">найден</span>{% else %}<span class="pill bad">не найден</span>{% endif %}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>🤖 AI Провайдеры</h2>
+    <div class="section-note">Статус подключения и приоритизация сервисов</div>
+  </div>
+  <div class="kv">
+    <div>Speech-to-Text (основной)</div>
+    <div>
+      <span class="pill ok">{{ ai_config.stt_primary or 'assemblyai' }}</span>
+      {% if ai_config.stt_primary == 'assemblyai' and assemblyai_key %}
+        <span class="pill ok" style="margin-left: 4px;">✓ ключ</span>
+      {% elif ai_config.stt_primary == 'openai' and openai_key %}
+        <span class="pill ok" style="margin-left: 4px;">✓ ключ</span>
+      {% else %}
+        <span class="pill bad" style="margin-left: 4px;">✗ ключ</span>
+      {% endif %}
+    </div>
+    <div>Speech-to-Text (резервный)</div>
+    <div>
+      {% if ai_config.stt_fallback %}
+        <span class="pill">{{ ai_config.stt_fallback }}</span>
+      {% else %}
+        <span class="pill mute">отключен</span>
+      {% endif %}
+    </div>
+    <div>Text Processing (основной)</div>
+    <div>
+      <span class="pill ok">{{ ai_config.nlp_primary or 'gemini' }}</span>
+      {% if ai_config.nlp_primary == 'gemini' and gemini_key %}
+        <span class="pill ok" style="margin-left: 4px;">✓ ключ</span>
+      {% elif ai_config.nlp_primary == 'openai' and openai_key %}
+        <span class="pill ok" style="margin-left: 4px;">✓ ключ</span>
+      {% else %}
+        <span class="pill bad" style="margin-left: 4px;">✗ ключ</span>
+      {% endif %}
+    </div>
+    <div>Text Processing (резервный)</div>
+    <div>
+      {% if ai_config.nlp_fallback %}
+        <span class="pill">{{ ai_config.nlp_fallback }}</span>
+      {% else %}
+        <span class="pill mute">отключен</span>
+      {% endif %}
+    </div>
+  </div>
+  <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-soft);">
+    <a href="/settings/ai_providers">Настроить провайдеры →</a> |
+    <a href="/api_usage">Просмотр использования →</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Параметры</h2></div>
+  <div class="kv">
+    <div>Таблица Google Sheets</div><div class="mono-cell">{{ s.google.sheet_name }}</div>
+    <div>Направлений (листов)</div><div>{{ dept_count }}</div>
+    <div>Разрешённых пользователей</div><div>{{ allowed_count }}</div>
+    <div>Подтверждение перед записью</div>
+    <div>{% if s.behavior.require_confirmation %}<span class="pill ok">включено</span>{% else %}<span class="pill mute">выключено</span>{% endif %}</div>
+    <div>Статус новой задачи</div><div>{{ s.behavior.default_status }}</div>
+    <div>Таймзона</div><div class="mono-cell">{{ s.behavior.timezone }}</div>
+  </div>
+</div>
+{% endblock %}

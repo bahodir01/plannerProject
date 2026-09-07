@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Настройки</div>
+  <h1>Google Sheets</h1>
+  <p>Таблица-журнал и сервисные креды для записи задач по листам-направлениям.</p>
+</div>
+{% if saved == "1" %}<div class="flash ok">Сохранено</div>{% endif %}
+{% if saved == "err" %}<div class="flash err">Загруженный файл не является корректным JSON</div>{% endif %}
+
+<div class="card">
+  <div class="card-head">
+    <h2>Подключение к таблице</h2>
+    <div class="section-note">Укажите путь к существующим кредам или загрузите файл.</div>
+  </div>
+  <form method="post" action="/settings/google" enctype="multipart/form-data">
+    <div class="field">
+      <label>Название таблицы</label>
+      <input type="text" name="sheet_name" value="{{ s.google.sheet_name }}" placeholder="Planner">
+    </div>
+    <div class="field">
+      <label>Путь к файлу кредов на сервере</label>
+      <input type="text" class="mono" name="creds_path" value="{{ s.google.creds_path }}" placeholder="google-creds.json">
+      <div class="hint">Сейчас: {% if creds_exists %}<span class="pill ok">найден</span>{% else %}<span class="pill bad">не найден</span>{% endif %}</div>
+    </div>
+    <div class="field">
+      <label>Загрузить google-creds.json</label>
+      <input type="file" name="creds_file" accept="application/json">
+      <div class="hint">Файл сохранится по указанному выше пути. Дайте сервисному email
+        из этого файла доступ «Редактор» к таблице.</div>
+    </div>
+    <div class="form-actions"><button type="submit" class="btn">Сохранить</button></div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Проверка связи</h2>
+    <div class="section-note">Откроет таблицу и покажет её листы.</div>
+  </div>
+  <a class="btn neutral" href="/settings/google?test=1">Проверить подключение</a>
+  {% if test_result is not none %}
+    {% if test_result.ok %}
+      <div class="flash ok" style="margin-top:16px">Связь есть. Листы в таблице:</div>
+      <div>{% for w in test_result.worksheets %}<span class="tag">{{ w }}</span>{% endfor %}</div>
+    {% else %}
+      <div class="flash err" style="margin-top:16px">Ошибка: {{ test_result.error }}</div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

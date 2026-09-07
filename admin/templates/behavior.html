@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">Настройки</div>
+  <h1>Поведение бота</h1>
+  <p>Как бот обрабатывает задачи перед записью в таблицу.</p>
+</div>
+{% if saved %}<div class="flash ok">Сохранено</div>{% endif %}
+
+<div class="card">
+  <form method="post" action="/settings/behavior">
+    <div class="field">
+      <label class="check">
+        <input type="checkbox" name="require_confirmation" {% if s.behavior.require_confirmation %}checked{% endif %}>
+        <span>Показывать задачу и требовать подтверждение перед записью</span>
+      </label>
+      <div class="hint">Если выключено — бот пишет в таблицу сразу после разбора.</div>
+    </div>
+    <hr class="divider">
+    <div class="field">
+      <label>Статус новой задачи</label>
+      <select name="default_status">
+        <option value="Not Started" {% if s.behavior.default_status == "Not Started" %}selected{% endif %}>Not Started</option>
+        <option value="In Progress" {% if s.behavior.default_status == "In Progress" %}selected{% endif %}>In Progress</option>
+        <option value="On Hold" {% if s.behavior.default_status == "On Hold" %}selected{% endif %}>On Hold</option>
+        <option value="Completed" {% if s.behavior.default_status == "Completed" %}selected{% endif %}>Completed</option>
+        <option value="Delayed/Cancelled" {% if s.behavior.default_status == "Delayed/Cancelled" %}selected{% endif %}>Delayed/Cancelled</option>
+      </select>
+      <div class="hint">Выбранный статус проставляется в колонку Status при создании новой задачи.</div>
+    </div>
+    <div class="field">
+      <label>Таймзона</label>
+      <input type="text" class="mono" name="timezone" value="{{ s.behavior.timezone }}" placeholder="Asia/Tashkent">
+      <div class="hint">Для расчёта относительных сроков («завтра», «ertaga»).</div>
+    </div>
+    <div class="form-actions"><button type="submit" class="btn">Сохранить</button></div>
+  </form>
+</div>
+{% endblock %}
